@@ -23,10 +23,12 @@ The playbook performs the following actions on all target VMs:
 
 ## 📁 Directory Structure
 ansible-rhel100-bootstrap/
+
 ├── site.yml 
 
 ├── inventory/
  └── hosts 
+
 ├── group_vars/
  └── all.yml 
 
