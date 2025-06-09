@@ -26,12 +26,12 @@ ansible-rhel100-bootstrap/
 ├── site.yml 
 
 ├── inventory/
-│ └── hosts 
+ └── hosts 
 ├── group_vars/
-│ └── all.yml 
+ └── all.yml 
 
 ├── files/
-│ └── id_rsa.pub 
+ └── id_rsa.pub 
 
 └── README.md
 ---
