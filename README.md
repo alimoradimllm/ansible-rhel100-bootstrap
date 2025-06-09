@@ -57,6 +57,7 @@ vm01 ansible_host=192.168.1.1
 vm02 ansible_host=192.168.1.2
 
 ...
+
 vm100 ansible_host=192.168.1.100
 
 ---
