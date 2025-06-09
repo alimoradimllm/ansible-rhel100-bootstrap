@@ -1,0 +1,81 @@
+---
+- name: Baseline Configuration for RHEL VMs
+  hosts: all
+  become: true
+
+  tasks:
+
+    - name: Create admin user
+      user:
+        name: devops
+        shell: /bin/bash
+        groups: wheel
+        append: yes
+        password: "{{ devops_password | password_hash('sha512') }}"
+
+    - name: Add SSH key for devops user
+      authorized_key:
+        user: devops
+        state: present
+        key: "{{ lookup('file', 'files/id_rsa.pub') }}"
+
+    - name: Set timezone
+      timezone:
+        name: Asia/Tehran
+
+    - name: Install essential packages
+      yum:
+        name:
+          - vim
+          - htop
+          - tmux
+          - wget
+          - net-tools
+          - git
+          - firewalld
+        state: present
+
+    - name: Start and enable firewalld
+      service:
+        name: firewalld
+        state: started
+        enabled: true
+
+    - name: Harden SSH - disable root login
+      lineinfile:
+        path: /etc/ssh/sshd_config
+        regexp: '^PermitRootLogin'
+        line: 'PermitRootLogin no'
+        state: present
+        backup: yes
+
+    - name: Harden SSH - disable password auth
+      lineinfile:
+        path: /etc/ssh/sshd_config
+        regexp: '^PasswordAuthentication'
+        line: 'PasswordAuthentication no'
+        state: present
+
+    - name: Restart SSHD
+      service:
+        name: sshd
+        state: restarted
+
+    - name: Configure NTP
+      yum:
+        name: chrony
+        state: present
+
+    - name: Enable and start chronyd
+      service:
+        name: chronyd
+        state: started
+        enabled: true
+
+    - name: Optional: Reboot if needed
+      reboot:
+        msg: "Rebooting to apply kernel update"
+        pre_reboot_delay: 10
+        post_reboot_delay: 30
+      when: ansible_facts.packages['kernel'] | length > 1
+      tags: reboot
