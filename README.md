@@ -42,6 +42,50 @@ git clone https://github.com/your-username/ansible-rhel100-bootstrap.git
 cd ansible-rhel100-bootstrap
 
 ---
+2. Edit Inventory (inventory/hosts)
+[all]
+vm01 ansible_host=192.168.1.1
+vm02 ansible_host=192.168.1.2
+...
+vm100 ansible_host=192.168.1.100
+---
+3. Set Password Variable (group_vars/all.yml)
+admin_ali_password: "YourSecurePasswordHere"
+
+This will be SHA‑512 hashed automatically.
+---
+4. Add SSH Key (files/id_rsa.pub)
+Your public key, e.g.:
+ssh-rsa AAAAB3... your_email@example.com
+---
+5. Run the playbook:
+ansible-playbook -i inventory/hosts site.yml
+---
+🔐 Security Notes
+Root SSH login is disabled
+
+SSH password authentication is disabled (key-only mode)
+
+admin-ali has sudo access via wheel group
+
+SSH key-based access is enforced
+
+📋 Requirements
+Ansible ≥ 2.9
+
+Passwordless SSH from control node (or use --ask-pass for initial connection)
+
+RHEL-compatible OS (RHEL, Rocky, AlmaLinux, etc.)
+
+🚧 Customization Tips
+Add more packages by editing the yum task
+
+Change timezone or NTP servers via variables
+
+Extend playbook with roles for Docker, monitoring, etc.
+
+Use --limit to apply changes to specific hosts/groups
+
 
 ### 🔧 Fixes Made:
 - Wrapped the directory structure in a proper fenced code block (` ``` `)
@@ -49,3 +93,5 @@ cd ansible-rhel100-bootstrap
 - Removed stray lines like `yaml` and `Copy/Edit` which appear to be clipboard artifacts
 - Ensured consistent Markdown formatting
 
+📜 License
+MIT License — feel free to use, modify, and contribute!
