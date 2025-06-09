@@ -66,6 +66,7 @@ vm100 ansible_host=192.168.1.100
 admin_ali_password: "YourSecurePasswordHere"
 
 This will be SHA‑512 hashed automatically.
+
 ---
 4. Add SSH Key (files/id_rsa.pub):
 
