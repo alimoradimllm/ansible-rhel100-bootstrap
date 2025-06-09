@@ -23,20 +23,20 @@ The playbook performs the following actions on all target VMs:
 
 ## 📁 Directory Structure
 ansible-rhel100-bootstrap/
-├── site.yml # Main Ansible playbook
+├── site.yml 
 ├── inventory/
-│ └── hosts # IP list of your RHEL VMs
+│ └── hosts 
 ├── group_vars/
-│ └── all.yml # Contains variables like admin password
+│ └── all.yml 
 ├── files/
-│ └── id_rsa.pub # Your SSH public key for admin-ali user
-└── README.md # This file
-
+│ └── id_rsa.pub 
+└── README.md
+---
 ## 🚀 Getting Started
 
 ### 1. Clone the Repository
 
-```bash
+
 git clone https://github.com/your-username/ansible-rhel100-bootstrap.git
 cd ansible-rhel100-bootstrap
 
@@ -48,8 +48,3 @@ cd ansible-rhel100-bootstrap
 - Removed stray lines like `yaml` and `Copy/Edit` which appear to be clipboard artifacts
 - Ensured consistent Markdown formatting
 
----
-
-✅ Yes, **after these corrections**, your README is fully functional and clean.
-
-Would you like me to generate a ready-to-copy version of the actual `site.yml` playbook next?
