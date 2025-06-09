@@ -38,6 +38,7 @@ ansible-rhel100-bootstrap/
 
 
 git clone https://github.com/your-username/ansible-rhel100-bootstrap.git
+
 cd ansible-rhel100-bootstrap
 
 ---
