@@ -51,10 +51,14 @@ cd ansible-rhel100-bootstrap
 
 
 [all]
+
 vm01 ansible_host=192.168.1.1
+
 vm02 ansible_host=192.168.1.2
+
 ...
 vm100 ansible_host=192.168.1.100
+
 ---
 3. Set Password Variable (group_vars/all.yml):
 
@@ -67,12 +71,16 @@ This will be SHA‑512 hashed automatically.
 
    
 Your public key, e.g.:
+
 ssh-rsa AAAAB3... your_email@example.com
+
 ---
 5. Run the playbook:
 
 ansible-playbook -i inventory/hosts site.yml
+
 ---
+
 🔐 Security Notes
 Root SSH login is disabled
 
