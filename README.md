@@ -1,119 +1,116 @@
-# ansible-rhel100-bootstrap
-rhel-vm-setup
+# Ansible RHEL Bootstrap
 
-This repository provides an Ansible playbook to automate the initial setup and security hardening of **100+ RHEL-based virtual machines**. It is designed for system administrators managing large-scale Linux environments who want fast, consistent, and secure baseline configuration.
-
----
-
-## ✨ Features
-
-The playbook performs the following actions on all target VMs:
-
-- ✅ Creates a privileged user `admin-ali`
-- 🔑 Installs an SSH public key for secure login
-- 🔐 Disables root login and password authentication over SSH
-- 📦 Installs essential tools:
-  - `nano`, `nload`, `screen`, `vim`, `htop`, `tmux`, `wget`, `net-tools`, `git`
-- 🌐 Configures timezone to `Asia/Tehran`
-- ⏱ Enables and starts NTP service (`chronyd`)
-- 🔥 Enables and starts `firewalld`
-- 🔁 Optional reboot if multiple kernel versions detected (tagged)
+Ansible role/playbook to bootstrap and harden large fleets of RHEL, Rocky, or AlmaLinux servers (100+). It creates a privileged user with SSH keys, configures system security, installs base packages, and sets up time, firewall, and system services.
 
 ---
 
-## 📁 Directory Structure
-ansible-rhel100-bootstrap/
+## Features
 
-├── site.yml 
+- Create a secure admin user with SSH key authentication  
+- Configure `sshd` (disable root login, disable password auth, configurable options)  
+- Install base packages via `ansible.builtin.package`  
+- Configure system timezone (`ansible.posix.timezone`)  
+- Set up chrony with custom NTP pools  
+- Enable and configure firewalld with variable-defined services  
+- Secure password hashing (`password_hash('sha512')`)  
+- OS checks to ensure RedHat-family compliance  
+- Scales to 100+ hosts with `serial` and `forks` control  
 
-├── inventory/
- └── hosts 
-
-├── group_vars/
- └── all.yml 
-
-├── files/
- └── id_rsa.pub 
-
-└── README.md
 ---
-## 🚀 Getting Started
 
-### 1. Clone the Repository
+## Requirements
 
+- Ansible 2.15+  
+- Supported platforms: RHEL 8/9, Rocky Linux 8/9, AlmaLinux 8/9  
+- SSH access with a privileged user (or root for first run)  
 
-git clone https://github.com/your-username/ansible-rhel100-bootstrap.git
+---
 
+## Usage
+
+Clone repo and run playbook:
+
+```bash
+git clone https://github.com/alimoradimllm/ansible-rhel100-bootstrap.git
 cd ansible-rhel100-bootstrap
+ansible-playbook -i inventory bootstrap.yml
+```
+
+Run for specific host/group:
+
+```bash
+ansible-playbook -i inventory bootstrap.yml --limit webservers
+```
+
+Use tags for partial runs:
+
+```bash
+ansible-playbook -i inventory bootstrap.yml --tags "sshd,packages"
+```
 
 ---
-2. Edit Inventory (inventory/hosts):
 
+## Variables
 
+Define in `group_vars/all.yml` or host-specific vars:
+
+```yaml
+admin_user: "ansibleadmin"
+admin_ssh_key: "~/.ssh/id_rsa.pub"
+sshd_disable_root: true
+sshd_password_auth: false
+bootstrap_packages:
+  - vim
+  - curl
+  - wget
+firewalld_services:
+  - ssh
+  - http
+timezone: "Asia/Tehran"
+chrony_pools:
+  - pool.ntp.org
+```
+
+---
+
+## Inventory Example
+
+```ini
 [all]
+server1 ansible_host=192.0.2.10
+server2 ansible_host=192.0.2.11
 
-vm01 ansible_host=192.168.1.1
+[webservers]
+server1
 
-vm02 ansible_host=192.168.1.2
-
-...
-
-vm100 ansible_host=192.168.1.100
-
----
-3. Set Password Variable (group_vars/all.yml):
-
-
-admin_ali_password: "YourSecurePasswordHere"
-
-This will be SHA‑512 hashed automatically.
-
----
-4. Add SSH Key (files/id_rsa.pub):
-
-   
-Your public key, e.g.:
-
-ssh-rsa AAAAB3... your_email@example.com
-
----
-5. Run the playbook:
-
-ansible-playbook -i inventory/hosts site.yml
+[dbservers]
+server2
+```
 
 ---
 
-🔐 Security Notes
-Root SSH login is disabled
+## Development & Testing
 
-SSH password authentication is disabled (key-only mode)
+- Lint with [ansible-lint](https://ansible-lint.readthedocs.io/)  
+- Test with [Molecule](https://molecule.readthedocs.io/) and Docker images (`rockylinux:9`, `almalinux:9`)  
+- Use `requirements.yml` for collections  
 
-admin-ali has sudo access via wheel group
+---
 
-SSH key-based access is enforced
+## Security Notes
 
-📋 Requirements
-Ansible ≥ 2.9
+- Use [Ansible Vault](https://docs.ansible.com/ansible/latest/vault_guide/index.html) for secrets  
+- Do not commit real SSH keys or passwords into the repo  
 
-Passwordless SSH from control node (or use --ask-pass for initial connection)
+---
 
-RHEL-compatible OS (RHEL, Rocky, AlmaLinux, etc.)
+## License
 
-🚧 Customization Tips
-Add more packages by editing the yum task
+[MIT](LICENSE)
 
-Change timezone or NTP servers via variables
+---
 
-Extend playbook with roles for Docker, monitoring, etc.
+## Changelog
 
-Use --limit to apply changes to specific hosts/groups
-
-
-### 🔧 Fixes Made:
-- Wrapped the directory structure in a proper fenced code block (` ``` `)
-- Fixed indentation issues under `inventory/`, `group_vars/`, etc.
-- Removed stray lines like `yaml` and `Copy/Edit` which appear to be clipboard artifacts
-- Ensured consistent Markdown formatting
-
-📜 License
-MIT License — feel free to use, modify, and contribute!
+- **v1.0.0** – Initial bootstrap playbook  
+- **v1.1.0** – Converted into role structure, added vars/handlers, Molecule tests  
